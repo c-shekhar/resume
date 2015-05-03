@@ -23,7 +23,12 @@ if(empty($_POST)===false)
                     $query2=mysqli_query($con,"INSERT INTO dir_user(fname,lname,email,gender,dob,password,user_name)VALUES('$fname','$lname','$email','$gender','$birthday','$password','$user_name');");
                     $inserted_dir_id=mysqli_insert_id($con);
                     if($query2){
-                        $query3=mysqli_query($con,"INSERT INTO user(dir_id,fname,lname,user_name,email)VALUES ('$inserted_dir_id','$fname','$lname','$user_name','$email');");
+                        $verify_string='';
+                        for($i=0;$i<10;$i++){
+                            $verify_string.=chr(mt_rand(32,126));
+                        }
+                        $verify_string=urlencode($verify_string);
+                        $query3=mysqli_query($con,"INSERT INTO user(dir_id,fname,lname,user_name,email,verify_string)VALUES ('$inserted_dir_id','$fname','$lname','$user_name','$email','$verify_string');");
                         $inserted_ssn=mysqli_insert_id($con);
                         if($query3){
                             $query4=mysqli_query($con,"UPDATE dir_user SET ssn=$inserted_ssn WHERE dir_id='$inserted_dir_id'");
@@ -34,7 +39,7 @@ if(empty($_POST)===false)
                                                 $verify_string.=chr(mt_rand(32,126));
                                             }
                                                 //echo "success!";
-                                                $verify_string=urlencode($verify_string);
+                                                
                                                 $safe_email=urlencode($email);
                                                 $verify_url="http://localhost/resume-master/resume-master/core/user/verify_user.php";
                                                 $msg_body="click on this link to activate your account ".$verify_url."?email=".$safe_email."&verify_string=".$verify_string."></a>";
@@ -57,7 +62,7 @@ if(empty($_POST)===false)
                                                 $mail->AddAddress($email);
                                                 if($mail->Send())
                                                 {
-                                                    echo "<h1><center>Verification mail has been sent to your email-id,kindly do check your spam if you haven't got the mail.Follow the link to activate your account and enjoy profferys!!</center></h1>";
+                                                    echo "<h1><center>Verification mail has been sent to your email-id,kindly check your spam if you haven't got the mail.Follow the link to activate your account and enjoy profferys!!</center></h1>";
                                                     }
                                                     else
                                                     {
